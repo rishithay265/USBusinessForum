@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 import { listArticlesByDate, getArchiveDays } from "@/lib/news.functions";
 import { StoryCard, BriefItem } from "@/components/site/ArticleCard";
-import { AdSlot } from "@/components/site/AdSlot";
 import { SECTIONS } from "@/lib/categories";
 import {
   todayUS,
@@ -181,7 +180,6 @@ function ArchivePage() {
       </div>
 
 
-      <AdSlot slotId="archive-top" format="leaderboard" />
 
       {!lead ? (
         <div className="hairline py-16 text-center">
@@ -248,7 +246,6 @@ function ArchivePage() {
         </section>
       ) : null}
 
-      <AdSlot slotId="archive-bottom" format="footer" />
     </div>
   );
 }

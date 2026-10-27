@@ -3,7 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { listArticles } from "@/lib/news.functions";
 import { LeadStory, StoryCard, BriefItem } from "@/components/site/ArticleCard";
 import { MostRead } from "@/components/site/MostRead";
-import { AdSlot } from "@/components/site/AdSlot";
 import { SECTIONS } from "@/lib/categories";
 
 export const Route = createFileRoute("/")({
@@ -64,7 +63,6 @@ function FrontPage() {
 
             <aside className="lg:border-l lg:border-border lg:pl-8">
               <MostRead limit={6} />
-              <AdSlot slotId="home-sidebar" format="rectangle" />
               <h2 className="kicker rule-top mt-10 pt-3 pb-4">Latest Business Wire</h2>
               {column.map((article) => (
                 <BriefItem key={article.slug} article={article} />
@@ -72,7 +70,6 @@ function FrontPage() {
             </aside>
           </div>
 
-          <AdSlot slotId="home-leaderboard" format="leaderboard" />
 
           {grid.length > 0 ? (
             <section className="rule-top mt-14 pt-6">
