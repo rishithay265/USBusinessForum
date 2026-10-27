@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import logo from "@/assets/usbf-logo.png.asset.json";
+import logo from "@/assets/usbf-logo.png";
 import { SECTIONS } from "@/lib/categories";
 
 export function SiteFooter() {
@@ -8,7 +8,7 @@ export function SiteFooter() {
     <footer className="mt-20 border-t border-border bg-secondary">
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="flex flex-col items-center gap-6 text-center">
-          <img src={logo.url} alt="US Business Forum" className="h-12 w-auto" />
+          <img src={logo} alt="US Business Forum" className="h-12 w-auto" />
           <nav>
             <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 font-sans text-[0.7rem] font-semibold uppercase tracking-[0.16em]">
               {SECTIONS.map((section) => (

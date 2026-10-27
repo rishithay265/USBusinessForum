@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
-import logo from "@/assets/usbf-logo.png.asset.json";
+import logo from "@/assets/usbf-logo.png";
 import { SECTIONS } from "@/lib/categories";
 import { formatUSWeekday, formatUSTime } from "@/lib/format";
 import { SearchOverlay } from "@/components/site/SearchOverlay";
@@ -33,7 +33,7 @@ export function SiteHeader({ now }: { now: string }) {
         <div className="flex justify-center py-6">
           <Link to="/" aria-label="US Business Forum home">
             <img
-              src={logo.url}
+              src={logo}
               alt="US Business Forum"
               className="h-16 w-auto sm:h-20 md:h-24"
               width={960}

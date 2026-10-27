@@ -14,7 +14,7 @@ export type OriginalArticle = {
   is_original: boolean;
 };
 
-import kenectImage from "@/assets/kenect-acquisition.png.asset.json";
+import kenectImage from "@/assets/kenect-acquisition.png";
 
 export const ORIGINAL_ARTICLES: OriginalArticle[] = [
   {
@@ -26,7 +26,7 @@ export const ORIGINAL_ARTICLES: OriginalArticle[] = [
     author: "US Business Forum Staff",
     source_name: "US Business Forum",
     source_url: null,
-    image_url: kenectImage.url,
+    image_url: kenectImage,
     category: "companies",
     published_at: "2026-04-29T13:30:00-04:00",
     is_featured: false,
