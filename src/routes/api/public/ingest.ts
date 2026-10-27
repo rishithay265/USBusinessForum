@@ -142,7 +142,7 @@ function articleBodyFromJsonLd(html: string): string | null {
 
 // Visits the publisher's page and extracts the complete story text so readers
 // get the whole article on our site instead of a teaser plus an outbound link.
-async function fetchFullText(url: string): Promise<string | null> {
+async function fetchFullText(url: string): Promise<{ text: string | null; image: string | null } | null> {
   try {
     const res = await fetch(url, {
       headers: { "user-agent": BROWSER_UA, accept: "text/html,*/*;q=0.8" },
@@ -156,7 +156,14 @@ async function fetchFullText(url: string): Promise<string | null> {
     const fromParagraphs = paragraphs.join("\n\n");
     const best =
       (fromLd?.length ?? 0) >= fromParagraphs.length ? (fromLd ?? fromParagraphs) : fromParagraphs;
-    return best.length > 600 ? best.slice(0, 40_000) : null;
+    const image =
+      /<meta[^>]+(?:property|name)=["']og:image(?::secure_url)?["'][^>]+content=["']([^"']+)["']/i.exec(html)?.[1] ??
+      /<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']og:image["']/i.exec(html)?.[1] ??
+      null;
+    return {
+      text: best.length > 600 ? best.slice(0, 40_000) : null,
+      image: image ? decodeEntities(image) : null,
+    };
   } catch {
     return null;
   }
@@ -331,7 +338,9 @@ async function runIngest() {
         items.filter((item) => !alreadyFull.has(item.slug)),
         FETCH_CONCURRENCY,
         async (item) => {
-          const full = await fetchFullText(item.source_url);
+          const page = await fetchFullText(item.source_url);
+          if (page?.image && !item.image_url) item.image_url = page.image;
+          const full = page?.text;
           if (full) {
             item.content = full;
             scraped += 1;
