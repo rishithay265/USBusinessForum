@@ -24,7 +24,7 @@ function ArticleImage({
     <Link to="/article/$slug" params={{ slug: article.slug }} className="block overflow-hidden bg-muted">
       <img
         src={article.image_url}
-        alt={cleanTitle(article)}
+        alt={article.image_alt ?? cleanTitle(article)}
         className={`${aspect} w-full object-cover transition-transform duration-500 hover:scale-[1.03]`}
         loading={eager ? "eager" : "lazy"}
       />

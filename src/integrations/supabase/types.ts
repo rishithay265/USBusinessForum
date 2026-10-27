@@ -49,6 +49,15 @@ export type Database = {
           summary: string | null
           title: string
           updated_at: string
+          audio_url: string | null
+          status: string
+          ai_generated: boolean
+          image_alt: string | null
+          seo_title: string | null
+          seo_description: string | null
+          tags: string[]
+          source_slug: string | null
+          generation_notes: Json | null
         }
         Insert: {
           author?: string | null
@@ -66,6 +75,15 @@ export type Database = {
           summary?: string | null
           title: string
           updated_at?: string
+          audio_url?: string | null
+          status?: string
+          ai_generated?: boolean
+          image_alt?: string | null
+          seo_title?: string | null
+          seo_description?: string | null
+          tags?: string[]
+          source_slug?: string | null
+          generation_notes?: Json | null
         }
         Update: {
           author?: string | null
@@ -83,6 +101,15 @@ export type Database = {
           summary?: string | null
           title?: string
           updated_at?: string
+          audio_url?: string | null
+          status?: string
+          ai_generated?: boolean
+          image_alt?: string | null
+          seo_title?: string | null
+          seo_description?: string | null
+          tags?: string[]
+          source_slug?: string | null
+          generation_notes?: Json | null
         }
         Relationships: []
       }
@@ -113,6 +140,24 @@ export type Database = {
           started_at?: string
           status?: string
           updated_count?: number
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
         }
         Relationships: []
       }

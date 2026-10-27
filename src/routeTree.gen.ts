@@ -10,18 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as CompaniesRouteImport } from './routes/companies'
 import { Route as EconomyRouteImport } from './routes/economy'
+import { Route as EditorialPolicyRouteImport } from './routes/editorial-policy'
 import { Route as MarketsRouteImport } from './routes/markets'
 import { Route as OpinionRouteImport } from './routes/opinion'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TechnologyRouteImport } from './routes/technology'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
+import { Route as ApiPublicGenerateRouteImport } from './routes/api/public/generate'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArchiveRoute = ArchiveRouteImport.update({
@@ -39,6 +50,11 @@ const EconomyRoute = EconomyRouteImport.update({
   path: '/economy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditorialPolicyRoute = EditorialPolicyRouteImport.update({
+  id: '/editorial-policy',
+  path: '/editorial-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketsRoute = MarketsRouteImport.update({
   id: '/markets',
   path: '/markets',
@@ -47,6 +63,21 @@ const MarketsRoute = MarketsRouteImport.update({
 const OpinionRoute = OpinionRouteImport.update({
   id: '/opinion',
   path: '/opinion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TechnologyRoute = TechnologyRouteImport.update({
@@ -59,6 +90,11 @@ const ArticleSlugRoute = ArticleSlugRouteImport.update({
   path: '/article/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicGenerateRoute = ApiPublicGenerateRouteImport.update({
+  id: '/api/public/generate',
+  path: '/api/public/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
   id: '/api/public/ingest',
   path: '/api/public/ingest',
@@ -67,83 +103,125 @@ const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/archive': typeof ArchiveRoute
   '/companies': typeof CompaniesRoute
   '/economy': typeof EconomyRoute
+  '/editorial-policy': typeof EditorialPolicyRoute
   '/markets': typeof MarketsRoute
   '/opinion': typeof OpinionRoute
+  '/privacy': typeof PrivacyRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
   '/article/$slug': typeof ArticleSlugRoute
+  '/api/public/generate': typeof ApiPublicGenerateRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/archive': typeof ArchiveRoute
   '/companies': typeof CompaniesRoute
   '/economy': typeof EconomyRoute
+  '/editorial-policy': typeof EditorialPolicyRoute
   '/markets': typeof MarketsRoute
   '/opinion': typeof OpinionRoute
+  '/privacy': typeof PrivacyRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
   '/article/$slug': typeof ArticleSlugRoute
+  '/api/public/generate': typeof ApiPublicGenerateRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/archive': typeof ArchiveRoute
   '/companies': typeof CompaniesRoute
   '/economy': typeof EconomyRoute
+  '/editorial-policy': typeof EditorialPolicyRoute
   '/markets': typeof MarketsRoute
   '/opinion': typeof OpinionRoute
+  '/privacy': typeof PrivacyRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
   '/article/$slug': typeof ArticleSlugRoute
+  '/api/public/generate': typeof ApiPublicGenerateRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/archive'
     | '/companies'
     | '/economy'
+    | '/editorial-policy'
     | '/markets'
     | '/opinion'
+    | '/privacy'
+    | '/rss.xml'
+    | '/sitemap.xml'
     | '/technology'
     | '/article/$slug'
+    | '/api/public/generate'
     | '/api/public/ingest'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/archive'
     | '/companies'
     | '/economy'
+    | '/editorial-policy'
     | '/markets'
     | '/opinion'
+    | '/privacy'
+    | '/rss.xml'
+    | '/sitemap.xml'
     | '/technology'
     | '/article/$slug'
+    | '/api/public/generate'
     | '/api/public/ingest'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/archive'
     | '/companies'
     | '/economy'
+    | '/editorial-policy'
     | '/markets'
     | '/opinion'
+    | '/privacy'
+    | '/rss.xml'
+    | '/sitemap.xml'
     | '/technology'
     | '/article/$slug'
+    | '/api/public/generate'
     | '/api/public/ingest'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   ArchiveRoute: typeof ArchiveRoute
   CompaniesRoute: typeof CompaniesRoute
   EconomyRoute: typeof EconomyRoute
+  EditorialPolicyRoute: typeof EditorialPolicyRoute
   MarketsRoute: typeof MarketsRoute
   OpinionRoute: typeof OpinionRoute
+  PrivacyRoute: typeof PrivacyRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TechnologyRoute: typeof TechnologyRoute
   ArticleSlugRoute: typeof ArticleSlugRoute
+  ApiPublicGenerateRoute: typeof ApiPublicGenerateRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
 }
 
@@ -154,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/archive': {
@@ -177,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EconomyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/editorial-policy': {
+      id: '/editorial-policy'
+      path: '/editorial-policy'
+      fullPath: '/editorial-policy'
+      preLoaderRoute: typeof EditorialPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/markets': {
       id: '/markets'
       path: '/markets'
@@ -189,6 +281,27 @@ declare module '@tanstack/react-router' {
       path: '/opinion'
       fullPath: '/opinion'
       preLoaderRoute: typeof OpinionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/technology': {
@@ -205,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticleSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/generate': {
+      id: '/api/public/generate'
+      path: '/api/public/generate'
+      fullPath: '/api/public/generate'
+      preLoaderRoute: typeof ApiPublicGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/ingest': {
       id: '/api/public/ingest'
       path: '/api/public/ingest'
@@ -217,13 +337,19 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   ArchiveRoute: ArchiveRoute,
   CompaniesRoute: CompaniesRoute,
   EconomyRoute: EconomyRoute,
+  EditorialPolicyRoute: EditorialPolicyRoute,
   MarketsRoute: MarketsRoute,
   OpinionRoute: OpinionRoute,
+  PrivacyRoute: PrivacyRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TechnologyRoute: TechnologyRoute,
   ArticleSlugRoute: ArticleSlugRoute,
+  ApiPublicGenerateRoute: ApiPublicGenerateRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
 }
 export const routeTree = rootRouteImport

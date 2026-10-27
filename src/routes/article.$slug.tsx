@@ -11,6 +11,7 @@ import { BriefItem } from "@/components/site/ArticleCard";
 import { ReadingProgress } from "@/components/site/ReadingProgress";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { ArticleSkeleton } from "@/components/site/Skeletons";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/article/$slug")({
   loader: async ({ params }) => {
@@ -25,15 +26,49 @@ export const Route = createFileRoute("/article/$slug")({
       };
     }
     const { article } = loaderData;
-    const description = (article.summary ?? article.title).slice(0, 155);
+    const description = (article.seo_description ?? article.summary ?? article.title).slice(0, 160);
+    const title = (article.seo_title ?? article.title).slice(0, 68);
+    const url = `${SITE_URL}/article/${article.slug}`;
+    const image = article.image_url
+      ? article.image_url.startsWith("http")
+        ? article.image_url
+        : `${SITE_URL}${article.image_url}`
+      : `${SITE_URL}/og-default.png`;
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      headline: article.title.slice(0, 110),
+      description,
+      image: [image],
+      datePublished: article.published_at,
+      dateModified: article.published_at,
+      author: { "@type": "Organization", name: article.author ?? SITE_NAME },
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        logo: { "@type": "ImageObject", url: `${SITE_URL}/og-default.png` },
+      },
+      mainEntityOfPage: url,
+      articleSection: categoryLabel(article.category),
+      keywords: (article.tags ?? []).join(", ") || undefined,
+    };
     return {
       meta: [
-        { title: `${article.title.slice(0, 68)} — US Business Forum` },
+        { title: `${title} — ${SITE_NAME}` },
         { name: "description", content: description },
         { property: "og:title", content: article.title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: image },
+        { property: "article:published_time", content: article.published_at },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: article.title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: image },
       ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [{ type: "application/ld+json", children: JSON.stringify(jsonLd) }],
     };
   },
   pendingMs: 150,
@@ -81,7 +116,7 @@ function ArticlePage() {
   }, [article.slug]);
 
   const minutes = readingTime(article.content ?? article.summary ?? "");
-  const tags = extractTags(article.title, article.summary);
+  const tags = article.tags && article.tags.length > 0 ? article.tags : extractTags(article.title, article.summary);
   const summary = cleanSummary(article.summary, 320);
 
   return (
@@ -128,11 +163,24 @@ function ArticlePage() {
               <figure className="mt-8">
                 <img
                   src={article.image_url}
-                  alt={displayTitle}
+                  alt={article.image_alt ?? displayTitle}
                   className="aspect-[16/9] w-full object-cover"
                   loading="eager"
                 />
+                {article.ai_generated ? (
+                  <figcaption className="meta-line mt-2">AI-generated illustration</figcaption>
+                ) : null}
               </figure>
+            ) : null}
+
+            {article.audio_url ? (
+              <div className="mt-6 rounded-sm border border-border bg-secondary p-4">
+                <p className="kicker mb-2">Listen to this story</p>
+                <audio controls preload="none" src={article.audio_url} className="w-full">
+                  Your browser does not support audio playback.
+                </audio>
+                <p className="meta-line mt-2">AI-narrated audio version of this article.</p>
+              </div>
             ) : null}
 
             <div className="article-prose mt-8">
@@ -143,6 +191,18 @@ function ArticlePage() {
               )}
             </div>
 
+
+            {article.ai_generated ? (
+              <p className="meta-line mt-8">
+                This article was written with the help of AI from reporting by{" "}
+                {article.source_name ?? "a named publisher"} and checked automatically against that
+                reporting.{" "}
+                <Link to="/editorial-policy" className="underline">
+                  How we use AI
+                </Link>
+                .
+              </p>
+            ) : null}
 
             <div className="rule-top mt-10 flex flex-wrap items-center justify-between gap-4 pt-5">
               <ShareButtons title={displayTitle} slug={article.slug} />

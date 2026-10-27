@@ -18,6 +18,12 @@ export type Article = {
   published_at: string;
   is_original: boolean;
   is_featured: boolean;
+  image_alt?: string | null;
+  audio_url?: string | null;
+  ai_generated?: boolean | null;
+  tags?: string[] | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
 };
 
 function publicClient() {
@@ -41,7 +47,7 @@ function originals(): Article[] {
   return ORIGINAL_ARTICLES.map((a) => ({ ...a }));
 }
 const COLUMNS =
-  "slug,title,summary,content,author,source_name,source_url,image_url,category,published_at,is_original,is_featured";
+  "slug,title,summary,content,author,source_name,source_url,image_url,category,published_at,is_original,is_featured,image_alt,audio_url,ai_generated,tags,seo_title,seo_description";
 
 /** Articles published inside an explicit date window (U.S. Eastern days). */
 export const listArticlesByDate = createServerFn({ method: "GET" })
@@ -121,9 +127,7 @@ export const listArticles = createServerFn({ method: "GET" })
     const supabase = publicClient();
     let query = supabase
       .from("articles")
-      .select(
-        "slug,title,summary,content,author,source_name,source_url,image_url,category,published_at,is_original,is_featured",
-      )
+      .select(COLUMNS)
       .order("published_at", { ascending: false })
       .limit(limit);
 
@@ -152,9 +156,7 @@ export const getArticle = createServerFn({ method: "GET" })
     if (local) {
       const { data: localRelated } = await supabase
         .from("articles")
-        .select(
-          "slug,title,summary,content,author,source_name,source_url,image_url,category,published_at,is_original,is_featured",
-        )
+        .select(COLUMNS)
         .eq("category", local.category)
         .order("published_at", { ascending: false })
         .limit(5);
@@ -164,9 +166,7 @@ export const getArticle = createServerFn({ method: "GET" })
 
     const { data: row } = await supabase
       .from("articles")
-      .select(
-        "slug,title,summary,content,author,source_name,source_url,image_url,category,published_at,is_original,is_featured",
-      )
+      .select(COLUMNS)
       .eq("slug", data.slug)
       .maybeSingle();
 
@@ -174,9 +174,7 @@ export const getArticle = createServerFn({ method: "GET" })
 
     const { data: related } = await supabase
       .from("articles")
-      .select(
-        "slug,title,summary,content,author,source_name,source_url,image_url,category,published_at,is_original,is_featured",
-      )
+      .select(COLUMNS)
       .eq("category", (row as Article).category)
       .neq("slug", data.slug)
       .order("published_at", { ascending: false })
@@ -206,9 +204,7 @@ export const searchArticles = createServerFn({ method: "GET" })
     const supabase = publicClient();
     const { data: rows, error } = await supabase
       .from("articles")
-      .select(
-        "slug,title,summary,content,author,source_name,source_url,image_url,category,published_at,is_original,is_featured",
-      )
+      .select(COLUMNS)
       .or(`title.ilike.%${query}%,summary.ilike.%${query}%,content.ilike.%${query}%`)
       .order("published_at", { ascending: false })
       .limit(limit);
@@ -261,9 +257,7 @@ export const getMostRead = createServerFn({ method: "GET" })
 
     const { data: articles, error: articlesError } = await supabase
       .from("articles")
-      .select(
-        "slug,title,summary,content,author,source_name,source_url,image_url,category,published_at,is_original,is_featured",
-      )
+      .select(COLUMNS)
       .in("slug", slugs);
 
     if (articlesError) {
@@ -276,4 +270,19 @@ export const getMostRead = createServerFn({ method: "GET" })
     return slugs
       .map((s) => localMap.get(s) ?? remoteMap.get(s))
       .filter(Boolean) as Article[];
+  });
+
+export const subscribeToNewsletter = createServerFn({ method: "POST" })
+  .inputValidator((data: { email: string }) => data)
+  .handler(async ({ data }) => {
+    const email = (data.email ?? "").trim().toLowerCase().slice(0, 254);
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { ok: false as const, error: "Enter a valid email address." };
+    const supabase = publicClient();
+    const { error } = await supabase.from("subscribers").insert({ email });
+    // 23505 = already subscribed; treat as success.
+    if (error && error.code !== "23505") {
+      console.error("subscribe", error.message);
+      return { ok: false as const, error: "Could not subscribe right now. Please try again." };
+    }
+    return { ok: true as const };
   });

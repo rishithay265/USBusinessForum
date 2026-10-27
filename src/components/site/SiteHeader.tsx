@@ -35,7 +35,7 @@ export function SiteHeader({ now }: { now: string }) {
             <img
               src={logo}
               alt="US Business Forum"
-              className="h-16 w-auto sm:h-20 md:h-24"
+              className="h-16 w-auto sm:h-20 md:h-24 dark:invert dark:mix-blend-screen"
               width={960}
               height={240}
             />
