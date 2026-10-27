@@ -332,6 +332,13 @@ async function runIngest() {
         (existing ?? []).filter((r) => (r.content?.length ?? 0) > 900).map((r) => r.slug),
       );
 
+      // Keep the full story we already stored; the feed only carries a teaser
+      // and the upsert below would otherwise overwrite it.
+      const storedContent = new Map((existing ?? []).map((r) => [r.slug, r.content]));
+      for (const item of items) {
+        if (alreadyFull.has(item.slug)) item.content = storedContent.get(item.slug) ?? item.content;
+      }
+
       // Pull the complete body from the publisher page for anything we do not
       // already have a full story for.
       await mapWithLimit(
