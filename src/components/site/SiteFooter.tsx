@@ -9,7 +9,7 @@ export function SiteFooter() {
     <footer className="mt-20 border-t border-border bg-secondary">
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="flex flex-col items-center gap-6 text-center">
-          <img src={logo} alt="US Business Forum" className="h-12 w-auto dark:invert dark:mix-blend-screen" />
+          <img src={logo} alt="US Business Forum" className="h-9 w-auto dark:invert" />
           <nav>
             <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 font-sans text-[0.7rem] font-semibold uppercase tracking-[0.16em]">
               {SECTIONS.map((section) => (

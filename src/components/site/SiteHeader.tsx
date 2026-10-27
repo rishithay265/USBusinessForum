@@ -35,9 +35,9 @@ export function SiteHeader({ now }: { now: string }) {
             <img
               src={logo}
               alt="US Business Forum"
-              className="h-16 w-auto sm:h-20 md:h-24 dark:invert dark:mix-blend-screen"
-              width={960}
-              height={240}
+              className="h-12 w-auto sm:h-14 md:h-16 dark:invert"
+              width={1555}
+              height={306}
             />
           </Link>
         </div>

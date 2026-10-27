@@ -5,6 +5,7 @@
 // Stories that cannot pass the fact-check or the similarity check are parked as
 // "held" and never shown to readers.
 import { Mp3Encoder } from "@breezystack/lamejs";
+import jpeg from "jpeg-js";
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { normalizeText } from "@/lib/text";
@@ -242,10 +243,26 @@ async function upload(path: string, bytes: Uint8Array, contentType: string): Pro
   return storageUrl(path);
 }
 
+/** Print-magazine look: grayscale, a touch more contrast, light film grain. Guarantees black and white whatever the model returns. */
+function toMonochrome(input: Buffer): Buffer {
+  if (input[0] !== 0xff || input[1] !== 0xd8) return input; // not a JPEG; the site's CSS grayscale still covers it
+  const img = jpeg.decode(input, { useTArray: true, formatAsRGBA: true });
+  const px = img.data;
+  let seed = 1234567;
+  for (let i = 0; i < px.length; i += 4) {
+    const luma = 0.299 * px[i]! + 0.587 * px[i + 1]! + 0.114 * px[i + 2]!;
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    const grain = ((seed >>> 24) / 255 - 0.5) * 14;
+    const v = Math.max(0, Math.min(255, (luma - 128) * 1.12 + 128 + grain));
+    px[i] = px[i + 1] = px[i + 2] = v;
+  }
+  return Buffer.from(jpeg.encode({ data: px, width: img.width, height: img.height }, 88).data);
+}
+
 async function makeImage(draft: Draft, slug: string): Promise<string | null> {
   const key = env("OPENROUTER_API_KEY");
   if (!key) return null;
-  const prompt = `Editorial illustration for a business news website, flat modern style, muted professional palette, 16:9. ${draft.image_prompt}. Absolutely no text, no letters, no logos, no real people or faces.`;
+  const prompt = `Black-and-white editorial illustration in the style of a vintage print newspaper or 1950s business magazine: monochrome ink and halftone, strong contrast, fine film grain, classic composition, 16:9. Strictly black, white and grey tones only, no color. ${draft.image_prompt}. Absolutely no text, no letters, no logos, no real people or faces.`;
   const res = await retryingFetch(
     "https://openrouter.ai/api/v1/images",
     {
@@ -265,7 +282,7 @@ async function makeImage(draft: Draft, slug: string): Promise<string | null> {
   const json = (await res.json()) as { data?: { b64_json?: string }[] };
   const b64 = json.data?.[0]?.b64_json;
   if (!b64) throw new Error("Image model returned no image");
-  return upload(`images/${slug}.jpg`, Buffer.from(b64, "base64"), "image/jpeg");
+  return upload(`images/${slug}.jpg`, toMonochrome(Buffer.from(b64, "base64")), "image/jpeg");
 }
 
 function plainText(markdown: string): string {
