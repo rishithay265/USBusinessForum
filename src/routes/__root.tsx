@@ -93,7 +93,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Live United States business news and analysis." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "monetag", content: "39c1f4bff40800d86368194e779f93ab" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
