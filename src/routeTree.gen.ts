@@ -16,12 +16,14 @@ import { Route as CompaniesRouteImport } from './routes/companies'
 import { Route as EconomyRouteImport } from './routes/economy'
 import { Route as EditorialPolicyRouteImport } from './routes/editorial-policy'
 import { Route as MarketsRouteImport } from './routes/markets'
+import { Route as NewsSitemapDotxmlRouteImport } from './routes/news-sitemap[.]xml'
 import { Route as OpinionRouteImport } from './routes/opinion'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TechnologyRouteImport } from './routes/technology'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
+import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as ApiPublicGenerateRouteImport } from './routes/api/public/generate'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 
@@ -60,6 +62,11 @@ const MarketsRoute = MarketsRouteImport.update({
   path: '/markets',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsSitemapDotxmlRoute = NewsSitemapDotxmlRouteImport.update({
+  id: '/news-sitemap.xml',
+  path: '/news-sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OpinionRoute = OpinionRouteImport.update({
   id: '/opinion',
   path: '/opinion',
@@ -90,6 +97,11 @@ const ArticleSlugRoute = ArticleSlugRouteImport.update({
   path: '/article/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TagTagRoute = TagTagRouteImport.update({
+  id: '/tag/$tag',
+  path: '/tag/$tag',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicGenerateRoute = ApiPublicGenerateRouteImport.update({
   id: '/api/public/generate',
   path: '/api/public/generate',
@@ -109,12 +121,14 @@ export interface FileRoutesByFullPath {
   '/economy': typeof EconomyRoute
   '/editorial-policy': typeof EditorialPolicyRoute
   '/markets': typeof MarketsRoute
+  '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
   '/opinion': typeof OpinionRoute
   '/privacy': typeof PrivacyRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
   '/article/$slug': typeof ArticleSlugRoute
+  '/tag/$tag': typeof TagTagRoute
   '/api/public/generate': typeof ApiPublicGenerateRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
@@ -126,12 +140,14 @@ export interface FileRoutesByTo {
   '/economy': typeof EconomyRoute
   '/editorial-policy': typeof EditorialPolicyRoute
   '/markets': typeof MarketsRoute
+  '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
   '/opinion': typeof OpinionRoute
   '/privacy': typeof PrivacyRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
   '/article/$slug': typeof ArticleSlugRoute
+  '/tag/$tag': typeof TagTagRoute
   '/api/public/generate': typeof ApiPublicGenerateRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
@@ -144,12 +160,14 @@ export interface FileRoutesById {
   '/economy': typeof EconomyRoute
   '/editorial-policy': typeof EditorialPolicyRoute
   '/markets': typeof MarketsRoute
+  '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
   '/opinion': typeof OpinionRoute
   '/privacy': typeof PrivacyRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
   '/article/$slug': typeof ArticleSlugRoute
+  '/tag/$tag': typeof TagTagRoute
   '/api/public/generate': typeof ApiPublicGenerateRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
@@ -163,12 +181,14 @@ export interface FileRouteTypes {
     | '/economy'
     | '/editorial-policy'
     | '/markets'
+    | '/news-sitemap.xml'
     | '/opinion'
     | '/privacy'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/technology'
     | '/article/$slug'
+    | '/tag/$tag'
     | '/api/public/generate'
     | '/api/public/ingest'
   fileRoutesByTo: FileRoutesByTo
@@ -180,12 +200,14 @@ export interface FileRouteTypes {
     | '/economy'
     | '/editorial-policy'
     | '/markets'
+    | '/news-sitemap.xml'
     | '/opinion'
     | '/privacy'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/technology'
     | '/article/$slug'
+    | '/tag/$tag'
     | '/api/public/generate'
     | '/api/public/ingest'
   id:
@@ -197,12 +219,14 @@ export interface FileRouteTypes {
     | '/economy'
     | '/editorial-policy'
     | '/markets'
+    | '/news-sitemap.xml'
     | '/opinion'
     | '/privacy'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/technology'
     | '/article/$slug'
+    | '/tag/$tag'
     | '/api/public/generate'
     | '/api/public/ingest'
   fileRoutesById: FileRoutesById
@@ -215,12 +239,14 @@ export interface RootRouteChildren {
   EconomyRoute: typeof EconomyRoute
   EditorialPolicyRoute: typeof EditorialPolicyRoute
   MarketsRoute: typeof MarketsRoute
+  NewsSitemapDotxmlRoute: typeof NewsSitemapDotxmlRoute
   OpinionRoute: typeof OpinionRoute
   PrivacyRoute: typeof PrivacyRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TechnologyRoute: typeof TechnologyRoute
   ArticleSlugRoute: typeof ArticleSlugRoute
+  TagTagRoute: typeof TagTagRoute
   ApiPublicGenerateRoute: typeof ApiPublicGenerateRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
 }
@@ -276,6 +302,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news-sitemap.xml': {
+      id: '/news-sitemap.xml'
+      path: '/news-sitemap.xml'
+      fullPath: '/news-sitemap.xml'
+      preLoaderRoute: typeof NewsSitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/opinion': {
       id: '/opinion'
       path: '/opinion'
@@ -318,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticleSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tag/$tag': {
+      id: '/tag/$tag'
+      path: '/tag/$tag'
+      fullPath: '/tag/$tag'
+      preLoaderRoute: typeof TagTagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/generate': {
       id: '/api/public/generate'
       path: '/api/public/generate'
@@ -343,12 +383,14 @@ const rootRouteChildren: RootRouteChildren = {
   EconomyRoute: EconomyRoute,
   EditorialPolicyRoute: EditorialPolicyRoute,
   MarketsRoute: MarketsRoute,
+  NewsSitemapDotxmlRoute: NewsSitemapDotxmlRoute,
   OpinionRoute: OpinionRoute,
   PrivacyRoute: PrivacyRoute,
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TechnologyRoute: TechnologyRoute,
   ArticleSlugRoute: ArticleSlugRoute,
+  TagTagRoute: TagTagRoute,
   ApiPublicGenerateRoute: ApiPublicGenerateRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
 }

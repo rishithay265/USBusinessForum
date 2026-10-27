@@ -4,6 +4,8 @@ import { listArticles } from "@/lib/news.functions";
 import { LeadStory, StoryCard, BriefItem } from "@/components/site/ArticleCard";
 import { MostRead } from "@/components/site/MostRead";
 import { SECTIONS } from "@/lib/categories";
+import { PAGE_CACHE, canonical, ldScript } from "@/lib/seo";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,14 +16,39 @@ export const Route = createFileRoute("/")({
         content:
           "Live United States business news: markets, technology, the economy, companies and opinion, refreshed every five minutes from leading American newsrooms.",
       },
-      { property: "og:title", content: "US Business Forum — U.S. Business News" },
+      { property: "og:title", content: "US Business Forum — U.S. Business News, Markets & Companies" },
+      { property: "og:url", content: SITE_URL },
       {
         property: "og:description",
         content:
           "Live United States business headlines, markets coverage and original reporting, updated continuously.",
       },
     ],
+    links: [canonical("/")],
+    scripts: [
+      ldScript({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": `${SITE_URL}/#website`,
+            name: SITE_NAME,
+            url: SITE_URL,
+            inLanguage: "en-US",
+          },
+          {
+            "@type": "NewsMediaOrganization",
+            "@id": `${SITE_URL}/#org`,
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: { "@type": "ImageObject", url: `${SITE_URL}/og-default.png` },
+            ethicsPolicy: `${SITE_URL}/editorial-policy`,
+          },
+        ],
+      }),
+    ],
   }),
+  headers: () => PAGE_CACHE,
   loader: async () => {
     try {
       return await listArticles({ data: { limit: 120 } });
@@ -43,6 +70,7 @@ function FrontPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      <h1 className="sr-only">U.S. business news, markets, technology and companies</h1>
       {!lead ? (
         <p className="py-24 text-center text-muted-foreground">
           The newsroom feed is collecting today&apos;s United States business headlines.

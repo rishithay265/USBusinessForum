@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { listArticlesByDate, getArchiveDays } from "@/lib/news.functions";
 import { StoryCard, BriefItem } from "@/components/site/ArticleCard";
 import { SECTIONS } from "@/lib/categories";
+import { canonical } from "@/lib/seo";
 import {
   todayUS,
   shiftUSDate,
@@ -61,6 +62,7 @@ export const Route = createFileRoute("/archive")({
         content: "Browse U.S. business headlines by day, week or month, back through our archive.",
       },
     ],
+    links: [canonical("/archive")],
   }),
   pendingMs: 150,
   pendingMinMs: 300,

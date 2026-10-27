@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/integrations/supabase/types";
 import { ORIGINAL_ARTICLES } from "@/content/original-articles";
-import { cleanSummary } from "@/lib/text";
+import { cleanSummary, normalizeText } from "@/lib/text";
 
 export type Article = {
   slug: string;
@@ -43,6 +43,20 @@ function publicClient() {
   });
 }
 
+function tidy(a: Article): Article {
+  const out: Article = {
+    ...a,
+    title: normalizeText(a.title),
+    summary: normalizeText(a.summary),
+    content: normalizeText(a.content),
+  };
+  if (a.image_alt) out.image_alt = normalizeText(a.image_alt);
+  if (a.seo_title) out.seo_title = normalizeText(a.seo_title);
+  if (a.seo_description) out.seo_description = normalizeText(a.seo_description);
+  if (a.tags) out.tags = a.tags.map((t) => normalizeText(t));
+  return out;
+}
+
 function originals(): Article[] {
   return ORIGINAL_ARTICLES.map((a) => ({ ...a }));
 }
@@ -76,7 +90,7 @@ export const listArticlesByDate = createServerFn({ method: "GET" })
       return t >= fromMs && t <= toMs && (!data.category || a.category === data.category);
     });
 
-    return [...local, ...((rows ?? []) as Article[])]
+    return [...local, ...((rows ?? []) as Article[]).map(tidy)]
       .sort((a, b) => +new Date(b.published_at) - +new Date(a.published_at))
       .slice(0, limit);
   });
@@ -136,7 +150,7 @@ export const listArticles = createServerFn({ method: "GET" })
     const { data: rows, error } = await query;
     if (error) console.error("listArticles", error.message);
 
-    const scraped = (rows ?? []) as Article[];
+    const scraped = ((rows ?? []) as Article[]).map(tidy);
     const local = data.category
       ? originals().filter((a) => a.category === data.category)
       : originals();
@@ -180,7 +194,26 @@ export const getArticle = createServerFn({ method: "GET" })
       .order("published_at", { ascending: false })
       .limit(5);
 
-    return { article: row as Article, related: (related ?? []) as Article[] };
+    return {
+      article: tidy(row as Article),
+      related: ((related ?? []) as Article[]).map(tidy),
+    };
+  });
+
+/** Published stories carrying an exact tag (used by /tag/$tag). */
+export const listArticlesByTag = createServerFn({ method: "GET" })
+  .inputValidator((data: { tag: string; limit?: number }) => data)
+  .handler(async ({ data }) => {
+    const tag = data.tag.trim().slice(0, 80);
+    if (!tag) return [] as Article[];
+    const { data: rows, error } = await publicClient()
+      .from("articles")
+      .select(COLUMNS)
+      .contains("tags", [tag])
+      .order("published_at", { ascending: false })
+      .limit(Math.min(data.limit ?? 40, 100));
+    if (error) console.error("listArticlesByTag", error.message);
+    return ((rows ?? []) as Article[]).map(tidy);
   });
 
 export const getIngestStatus = createServerFn({ method: "GET" }).handler(async () => {

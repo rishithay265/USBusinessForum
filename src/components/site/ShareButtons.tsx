@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import { SITE_URL } from "@/lib/site";
 
 export function ShareButtons({ title, slug }: { title: string; slug: string }) {
   const [copied, setCopied] = useState(false);
-  const [url, setUrl] = useState("");
+  const url = `${SITE_URL}/article/${slug}`;
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
-
-  useEffect(() => {
-    setUrl(`${window.location.origin}/article/${slug}`);
-  }, [slug]);
 
   const handleCopy = async () => {
     try {

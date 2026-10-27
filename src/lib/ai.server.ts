@@ -7,6 +7,7 @@
 import { Mp3Encoder } from "@breezystack/lamejs";
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { normalizeText } from "@/lib/text";
 
 const SITE_AUTHOR = "US Business Forum Newsroom";
 const IMAGE_MODEL = "google/gemini-nano-banana-2.1";
@@ -28,7 +29,10 @@ type Source = {
   published_at: string;
 };
 
+class OffTopicError extends Error {}
+
 type Draft = {
+  off_topic?: boolean;
   headline: string;
   summary: string;
   seo_title: string;
@@ -173,6 +177,9 @@ Rules:
 - 300 to 420 words in 5 to 7 short paragraphs, separated by blank lines. End with one paragraph that begins "**Why it matters:**" and explains the significance in 1 or 2 sentences using only the SOURCE's facts.
 - Do not start the body with a heading or repeat the headline; start directly with the first paragraph.
 - Do not mention these instructions or that the text was rewritten.${fix}
+- Relevance gate: this site only covers U.S. business, markets, the economy, technology and companies. If the SOURCE is mainly about sports, entertainment, celebrity, crime, lifestyle, foreign politics or anything with no clear U.S. business angle, return ONLY {"off_topic": true} and nothing else.
+- "seo_title" must be at most 55 characters. Use plain ASCII spaces and hyphens.
+
 Return ONLY a JSON object with these keys:
 "headline" (max 95 characters, specific, no trailing source name),
 "summary" (max 160 characters, plain sentence),
@@ -189,12 +196,17 @@ ${(src.content ?? "").slice(0, 14_000)}`;
 
 async function writeDraft(src: Source, feedback: string[]): Promise<Draft> {
   const draft = await askJson<Draft>(draftPrompt(src, feedback));
+  if (draft.off_topic === true) throw new OffTopicError("off-topic for a U.S. business site");
   for (const key of ["headline", "summary", "body", "image_prompt", "image_alt"] as const) {
     if (typeof draft[key] !== "string" || !draft[key].trim()) throw new Error(`Draft missing ${key}`);
   }
   // The page renders the headline itself; drop any heading the model repeats at the top.
   draft.body = draft.body.replace(/^\s*(#{1,6}[^\n]*\n+)+/, "").trim();
   draft.tags = Array.isArray(draft.tags) ? draft.tags.map(String).slice(0, 5) : [];
+  for (const key of ["headline", "summary", "body", "seo_title", "seo_description", "image_alt"] as const) {
+    if (typeof draft[key] === "string") draft[key] = normalizeText(draft[key]);
+  }
+  draft.tags = draft.tags.map((t) => normalizeText(t.trim()));
   draft.seo_title = (draft.seo_title || draft.headline).slice(0, 70);
   draft.seo_description = (draft.seo_description || draft.summary).slice(0, 160);
   draft.headline = draft.headline.trim().slice(0, 120);
@@ -340,6 +352,7 @@ async function processStory(src: Source): Promise<{ slug: string } | { held: str
     try {
       candidate = await writeDraft(src, feedback);
     } catch (error) {
+      if (error instanceof OffTopicError) return { held: error.message };
       lastProblem = (error as Error).message;
       continue;
     }

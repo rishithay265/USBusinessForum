@@ -3,3 +3,4 @@ Allow: /
 Disallow: /api/
 
 Sitemap: https://usbusiness.forum/sitemap.xml
+Sitemap: https://usbusiness.forum/news-sitemap.xml

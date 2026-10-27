@@ -98,3 +98,9 @@ export function extractTags(title: string, summary?: string | null): string[] {
   }
   return Array.from(tags).slice(0, 5);
 }
+
+/** Swap exotic spaces and hyphens (e.g. U+202F in "$100 billion") for plain ones so search can match them. */
+export function normalizeText<T extends string | null | undefined>(input: T): T {
+  if (!input) return input;
+  return input.replace(/[\u00a0\u2007\u2009\u202f\u200b]/g, " ").replace(/[\u2010\u2011]/g, "-") as T;
+}

@@ -12,6 +12,7 @@ import { ReadingProgress } from "@/components/site/ReadingProgress";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { ArticleSkeleton } from "@/components/site/Skeletons";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { PAGE_CACHE, breadcrumbLd, canonical, ldScript, pageTitle } from "@/lib/seo";
 
 export const Route = createFileRoute("/article/$slug")({
   loader: async ({ params }) => {
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/article/$slug")({
     }
     const { article } = loaderData;
     const description = (article.seo_description ?? article.summary ?? article.title).slice(0, 160);
-    const title = (article.seo_title ?? article.title).slice(0, 68);
+    const title = article.seo_title ?? article.title;
     const url = `${SITE_URL}/article/${article.slug}`;
     const image = article.image_url
       ? article.image_url.startsWith("http")
@@ -54,7 +55,7 @@ export const Route = createFileRoute("/article/$slug")({
     };
     return {
       meta: [
-        { title: `${title} — ${SITE_NAME}` },
+        { title: pageTitle(title) },
         { name: "description", content: description },
         { property: "og:title", content: article.title },
         { property: "og:description", content: description },
@@ -67,10 +68,20 @@ export const Route = createFileRoute("/article/$slug")({
         { name: "twitter:description", content: description },
         { name: "twitter:image", content: image },
       ],
-      links: [{ rel: "canonical", href: url }],
-      scripts: [{ type: "application/ld+json", children: JSON.stringify(jsonLd) }],
+      links: [canonical(`/article/${article.slug}`)],
+      scripts: [
+        ldScript(jsonLd),
+        ldScript(
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: categoryLabel(article.category), path: `/${article.category}` },
+            { name: article.title, path: `/article/${article.slug}` },
+          ]),
+        ),
+      ],
     };
   },
+  headers: () => PAGE_CACHE,
   pendingMs: 150,
   pendingMinMs: 300,
   pendingComponent: ArticleSkeleton,
@@ -149,12 +160,14 @@ function ArticlePage() {
             {tags.length > 0 ? (
               <div className="mt-4 flex flex-wrap gap-2">
                 {tags.map((tag) => (
-                  <span
+                  <Link
                     key={tag}
-                    className="inline-flex items-center rounded-sm bg-secondary px-2 py-1 font-sans text-[0.65rem] font-semibold uppercase tracking-wider text-secondary-foreground"
+                    to="/tag/$tag"
+                    params={{ tag }}
+                    className="inline-flex items-center rounded-sm bg-secondary px-2 py-1 font-sans text-[0.65rem] font-semibold uppercase tracking-wider text-secondary-foreground hover:underline"
                   >
                     {tag}
-                  </span>
+                  </Link>
                 ))}
               </div>
             ) : null}
