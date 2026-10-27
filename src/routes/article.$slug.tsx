@@ -181,7 +181,7 @@ function ArticlePage() {
                   loading="eager"
                 />
                 {article.ai_generated ? (
-                  <figcaption className="meta-line mt-2">AI-generated illustration</figcaption>
+                  <figcaption className="meta-line mt-2">AI-generated image, not an actual photograph of the event</figcaption>
                 ) : null}
               </figure>
             ) : null}

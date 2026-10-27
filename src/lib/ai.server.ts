@@ -188,8 +188,8 @@ Return ONLY a JSON object with these keys:
 "seo_description" (max 155 characters, compelling and accurate),
 "body" (markdown, as described),
 "tags" (3 to 5 short topical tags, e.g. company names or themes),
-"image_prompt" (one sentence describing a generic editorial illustration of the topic; no real people, no logos, no text),
-"image_alt" (one factual sentence describing that illustration for screen readers, max 125 characters).
+"image_prompt" (a detailed 60 to 90 word brief for a photorealistic black-and-white documentary press photograph that is specific to THIS story, as a photo editor would write it for a photographer. Show the real-world subject of the news: the company's actual line of business, products, facilities, storefronts, trading floors, factories, warehouses, labs, data centers, vehicles, devices or the physical setting where the event happens, named by type and place if the SOURCE gives them (for example a fulfillment center, a chip fabrication clean room, a regional bank branch). State: the one main subject, the setting and time of day, camera angle and lens (for example 35mm, low angle, shallow depth of field), the lighting, and the mood. Pick the single most striking, concrete moment that would make a reader stop scrolling. Never generic stock imagery such as handshakes, glowing charts, abstract arrows, globes, lightbulbs or circuit-pattern backgrounds. No identifiable real people: show hands, silhouettes, backs of heads or crowds at a distance instead. No legible text, signage or logos),
+"image_alt" (one factual sentence describing what the photograph shows for screen readers, max 125 characters, naming the company or subject).
 
 SOURCE (${src.source_name ?? "unknown"}), headline: ${src.title}
 ${(src.content ?? "").slice(0, 14_000)}`;
@@ -262,7 +262,7 @@ function toMonochrome(input: Buffer): Buffer {
 async function makeImage(draft: Draft, slug: string): Promise<string | null> {
   const key = env("OPENROUTER_API_KEY");
   if (!key) return null;
-  const prompt = `Black-and-white editorial illustration in the style of a vintage print newspaper or 1950s business magazine: monochrome ink and halftone, strong contrast, fine film grain, classic composition, 16:9. Strictly black, white and grey tones only, no color. ${draft.image_prompt}. Absolutely no text, no letters, no logos, no real people or faces.`;
+  const prompt = `Photorealistic black-and-white documentary press photograph, shot on 35mm film, natural available light, true-to-life detail and textures, high contrast tonal range, fine film grain, in the tradition of Life magazine and Wall Street Journal photojournalism, 16:9 landscape. Strictly grayscale. SCENE: ${draft.image_prompt} Not an illustration, cartoon, 3D render, infographic or poster. Absolutely no legible text, no letters, no logos, no watermarks, and no recognizable real person or face.`;
   const res = await retryingFetch(
     "https://openrouter.ai/api/v1/images",
     {
